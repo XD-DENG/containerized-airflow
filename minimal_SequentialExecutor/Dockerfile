@@ -61,7 +61,7 @@ WORKDIR ${AIRFLOW_HOME}
 # Copy the current directory contents into the container at the working dir
 COPY . ${AIRFLOW_HOME}
 
-RUN chown -R airflow . ${AIRFLOW_HOME}
+RUN chown -R airflow: ${AIRFLOW_HOME}
 USER airflow
 
 RUN airflow initdb
