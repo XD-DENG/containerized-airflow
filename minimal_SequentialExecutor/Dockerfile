@@ -9,7 +9,7 @@ ENV AIRFLOW_HOME=${AIRFLOW_HOME}
 
 # Use env variables for Airflow configuration
 ENV AIRFLOW__WEBSERVER__RBAC=True
-ENV AIRFLOW__CORE__LOAD_EXAMPLES=True
+ENV AIRFLOW__CORE__LOAD_EXAMPLES=False
 
 
 RUN set -ex \
