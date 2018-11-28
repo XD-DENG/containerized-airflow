@@ -9,7 +9,7 @@ ENV AIRFLOW_HOME=${AIRFLOW_HOME}
 
 # Use env variables for Airflow configuration
 ENV AIRFLOW__WEBSERVER__RBAC=True
-ENV AIRFLOW__CORE__LOAD_EXAMPLES=False
+ENV AIRFLOW__CORE__LOAD_EXAMPLES=True
 
 
 RUN set -ex \
@@ -48,11 +48,8 @@ RUN set -ex \
         /usr/share/doc-base
 
 
-
-# For Airflow 1.10.0, we have pin Flask-AppBuilder==1.11.1
 RUN pip install cryptography
-RUN pip install Flask-AppBuilder==1.11.1
-RUN pip install apache-airflow==1.10.0
+RUN pip install apache-airflow==1.10.1
 
 
 # Set the working directory
