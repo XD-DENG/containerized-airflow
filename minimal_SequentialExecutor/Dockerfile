@@ -29,6 +29,7 @@ RUN set -ex \
         $buildDeps \
         build-essential \
         python3-pip \
+        sqlite3 \
         apt-utils \
         locales \
     && sed -i 's/^# en_US.UTF-8 UTF-8$/en_US.UTF-8 UTF-8/g' /etc/locale.gen \
