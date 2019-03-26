@@ -2,8 +2,6 @@ FROM python:3.6-slim
 
 ARG AIRFLOW_HOME=/usr/local/airflow
 
-# deal with Airflow license restriction
-ENV SLUGIFY_USES_TEXT_UNIDECODE=yes
 
 ENV AIRFLOW_HOME=${AIRFLOW_HOME}
 
@@ -50,7 +48,7 @@ RUN set -ex \
 
 
 RUN pip install cryptography
-RUN pip install apache-airflow==1.10.1
+RUN pip install 'apache-airflow==1.10.3b1'
 
 
 # Set the working directory
