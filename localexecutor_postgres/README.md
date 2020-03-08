@@ -6,7 +6,14 @@ Code here would ONLY fit **testing** or **demo** purposes.
 docker build -t xddeng/airflow:1.10.9_py36_localexecutor_postgres .
 ```
 
-## Commands to launch Airflow together with other services
+## Launch with `docker-compose`
+
+```bash
+docker-compose -p airflow_demo -f docker-compose.yml up -d
+```
+
+
+## Vanina Docker Commands to launch Airflow together with other services
 
 ```bash
 docker network create -d bridge airflow-network

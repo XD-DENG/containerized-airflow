@@ -1,0 +1,56 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    ports:
+    - "5432:5432"
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: password
+    command:
+      - "postgres"
+      - "-c"
+      - "listen_addresses=*"
+
+  adminer:
+    image: adminer
+    restart: always
+    depends_on:
+      - "db"
+    ports:
+    - "8000:8080"
+
+  airflow_webserver:
+    image: xddeng/airflow:1.10.9_py36_localexecutor_postgres
+    depends_on:
+      - "db"
+    restart: always
+    volumes:
+       - dag_folder:/usr/local/airflow/dags
+    ports:
+    - "8080:8080"
+    environment:
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgres://postgres:password@db:5432/postgres
+      AIRFLOW__CORE__PARALLELISM: 4
+      AIRFLOW__WEBSERVER__EXPOSE_CONFIG: "True"
+    command: >
+      sh -c "airflow initdb;
+             airflow create_user -r Admin -u admin -e admin@test.com -f xd -l deng -p admin;
+             airflow webserver"
+
+  airflow_scheduler:
+    image: xddeng/airflow:1.10.9_py36_localexecutor_postgres
+    depends_on:
+      - "airflow_webserver"
+    restart: always
+    volumes:
+       - dag_folder:/usr/local/airflow/dags
+    environment:
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgres://postgres:password@db:5432/postgres
+      AIRFLOW__CORE__PARALLELISM: 4
+      AIRFLOW__WEBSERVER__EXPOSE_CONFIG: "True"
+    command: >
+      sh -c "airflow scheduler"
+
+volumes:
+  dag_folder:
