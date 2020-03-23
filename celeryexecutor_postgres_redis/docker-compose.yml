@@ -1,0 +1,84 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    ports:
+    - "5432:5432"
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: password
+    command:
+      - "postgres"
+      - "-c"
+      - "listen_addresses=*"
+
+  adminer:
+    image: adminer
+    restart: always
+    depends_on:
+      - "db"
+    ports:
+    - "8000:8080"
+
+  redis:
+    image: redis
+    restart: always
+    ports:
+    - "6379:6379"
+
+  airflow_webserver:
+    image: xddeng/airflow:1.10.9_py36_celeryexecutor_postgres_redis
+    depends_on:
+      - "db"
+    restart: always
+    volumes:
+       - dag_folder:/usr/local/airflow/dags
+    ports:
+    - "8080:8080"
+    environment:
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgres://postgres:password@db:5432/postgres
+      AIRFLOW__CORE__PARALLELISM: 4
+      AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+      AIRFLOW__WEBSERVER__EXPOSE_CONFIG: "True"
+      AIRFLOW__CELERY__BROKER_URL: redis://redis:6379/0
+    command: >
+      sh -c "airflow initdb;
+             airflow create_user -r Admin -u admin -e admin@test.com -f xd -l deng -p admin;
+             airflow webserver"
+
+  airflow_scheduler:
+    image: xddeng/airflow:1.10.9_py36_celeryexecutor_postgres_redis
+    depends_on:
+      - "airflow_webserver"
+    restart: always
+    volumes:
+       - dag_folder:/usr/local/airflow/dags
+    environment:
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgres://postgres:password@db:5432/postgres
+      AIRFLOW__CORE__PARALLELISM: 4
+      AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+      AIRFLOW__WEBSERVER__EXPOSE_CONFIG: "True"
+      AIRFLOW__CELERY__BROKER_URL: redis://redis:6379/0
+    command: >
+      sh -c "airflow scheduler"
+
+  airflow_worker:
+    image: xddeng/airflow:1.10.9_py36_celeryexecutor_postgres_redis
+    depends_on:
+      - "db"
+    restart: always
+    volumes:
+       - dag_folder:/usr/local/airflow/dags
+    ports:
+    - "8793:8793"
+    environment:
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgres://postgres:password@db:5432/postgres
+      AIRFLOW__CORE__PARALLELISM: 4
+      AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+      AIRFLOW__WEBSERVER__EXPOSE_CONFIG: "True"
+      AIRFLOW__CELERY__BROKER_URL: redis://redis:6379/0
+    command: >
+      sh -c "airflow worker"
+
+volumes:
+  dag_folder:
