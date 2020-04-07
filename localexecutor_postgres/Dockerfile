@@ -45,7 +45,7 @@ RUN set -ex \
 
 RUN pip install psycopg2-binary
 RUN pip install cryptography
-RUN pip install 'apache-airflow==1.10.9'
+RUN pip install 'apache-airflow==1.10.10rc4'
 
 
 # Set the working directory
