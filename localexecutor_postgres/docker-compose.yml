@@ -21,7 +21,7 @@ services:
     - "8000:8080"
 
   airflow:
-    image: xddeng/airflow:1.10.10_py36_localexecutor_postgres
+    image: xddeng/airflow:1.10.12rc1_py36_localexecutor_postgres
     depends_on:
       - "db"
     restart: always
