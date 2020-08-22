@@ -3,13 +3,13 @@
 Code here would ONLY fit **testing** or **demo** purposes.
 
 ```bash
-docker build -t xddeng/airflow:1.10.10_py36_localexecutor_postgres .
+docker build -t xddeng/airflow:py36_localexecutor_postgres .
 ```
 
 ## Launch with `docker-compose`
 
 ```bash
-docker-compose -p airflow_demo -f docker-compose.yml up -d
+docker-compose -p airflow_demo -f docker-compose.yml up --force-recreate --always-recreate-deps
 ```
 
 
@@ -38,7 +38,7 @@ docker run \
     -e AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgres://postgres:password@db:5432/postgres \
     -e AIRFLOW__CORE__PARALLELISM=4 \
     -e AIRFLOW__WEBSERVER__EXPOSE_CONFIG=True \
-    xddeng/airflow:1.10.10_py36_localexecutor_postgres
+    xddeng/airflow:py36_localexecutor_postgres
 
 ```
 

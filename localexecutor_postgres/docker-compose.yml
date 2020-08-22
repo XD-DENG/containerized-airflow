@@ -21,7 +21,7 @@ services:
     - "8000:8080"
 
   airflow:
-    image: xddeng/airflow:1.10.12rc1_py36_localexecutor_postgres
+    image: xddeng/airflow:py36_localexecutor_postgres
     depends_on:
       - "db"
     restart: always
@@ -35,6 +35,7 @@ services:
       AIRFLOW__WEBSERVER__EXPOSE_CONFIG: "True"
     command: >
       sh -c "airflow initdb;
+             airflow upgradedb;
              airflow create_user -r Admin -u admin -e admin@test.com -f xd -l deng -p admin;
              airflow webserver & airflow scheduler"
 
