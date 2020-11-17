@@ -44,12 +44,10 @@ RUN set -ex \
         /usr/share/doc \
         /usr/share/doc-base
 
-RUN wget https://dist.apache.org/repos/dist/dev/airflow/2.0.0a2/apache_airflow-2.0.0a2-py3-none-any.whl
 
 RUN pip install psycopg2-binary
 RUN pip install cryptography
-RUN pip install apache_airflow-2.0.0a2-py3-none-any.whl
-RUN pip install 'werkzeug<1.0.0'
+RUN pip install apache_airflow==2.0.0b2
 
 # Set the working directory
 WORKDIR ${AIRFLOW_HOME}
