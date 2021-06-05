@@ -1,4 +1,4 @@
-FROM python:3.6-slim
+FROM python:3.8-slim
 
 ARG AIRFLOW_HOME=/usr/local/airflow
 
@@ -46,8 +46,9 @@ RUN set -ex \
 
 
 RUN pip install psycopg2-binary
+RUN pip install virtualenv
 RUN pip install cryptography
-RUN pip install apache_airflow==2.0.0b2
+RUN pip install apache_airflow==2.1.0
 
 # Set the working directory
 WORKDIR ${AIRFLOW_HOME}
