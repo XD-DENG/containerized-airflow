@@ -13,7 +13,7 @@ services:
       - "listen_addresses=*"
 
   adminer:
-    image: adminer:4.7.7
+    image: adminer:4.8.1
     restart: always
     depends_on:
       - "db"
