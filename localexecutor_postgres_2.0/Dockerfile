@@ -48,7 +48,7 @@ RUN set -ex \
 RUN pip install psycopg2-binary
 RUN pip install virtualenv
 RUN pip install cryptography
-RUN pip install apache_airflow==2.6.3
+RUN pip install apache_airflow==2.7.0
 
 # Set the working directory
 WORKDIR ${AIRFLOW_HOME}
