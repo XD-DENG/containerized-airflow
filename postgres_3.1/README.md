@@ -3,7 +3,7 @@
 Code here would ONLY fit **testing** or **demo** purposes.
 
 ```bash
-docker build -t xddeng/airflow:airflow3_py3_11_localexecutor_postgres .
+docker build -t xddeng/airflow:airflow3 .
 ```
 
 ## Launch with `docker compose`

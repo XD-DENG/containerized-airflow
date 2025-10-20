@@ -1,0 +1,95 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    ports:
+    - "5432:5432"
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: password
+    command:
+      - "postgres"
+      - "-c"
+      - "listen_addresses=*"
+
+  adminer:
+    image: adminer:4.8.1
+    restart: always
+    depends_on:
+      - "db"
+    ports:
+    - "8000:8080"
+
+  redis:
+    image: redis
+    restart: always
+    ports:
+    - "6379:6379"
+
+  airflow_api_server:
+    image: xddeng/airflow:airflow3
+    depends_on:
+      - "db"
+    restart: always
+    ports:
+    - "8080:8080"
+    environment: &airflow_env_vars
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgres://postgres:password@db:5432/postgres
+      AIRFLOW__CELERY__BROKER_URL: redis://redis:6379/0
+      AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+      AIRFLOW__CORE__PARALLELISM: 4
+      AIRFLOW__WEBSERVER__EXPOSE_CONFIG: "True"
+      AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_ALL_ADMINS: "True"
+      AIRFLOW__API__BASE_URL: "http://airflow_api_server:8080"
+      AIRFLOW__API__SECRET_KEY: "fdsafdsauiowrekjsa9"  # a random value is used here. Replace it if you want to use this a a template for Prod deployment
+      AIRFLOW__API_AUTH__JWT_SECRET: "faskuirekluifsjakl"  # a random value is used here. Replace it if you want to use this a a template for Prod deployment
+    command: >
+      sh -c "airflow db migrate;airflow api-server"
+
+  airflow_scheduler:
+    image: xddeng/airflow:airflow3
+    depends_on:
+      - "db"
+      - "airflow_api_server"
+      - "redis"
+    restart: always
+    environment: *airflow_env_vars
+    command: >
+      sh -c "airflow scheduler"
+
+  airflow_dag_processor:
+    image: xddeng/airflow:airflow3
+    depends_on:
+      - "db"
+      - "airflow_api_server"
+    restart: always
+    volumes:
+       - ./dag_folder:/usr/local/airflow/dags
+    environment: *airflow_env_vars
+    command: >
+      sh -c "airflow dag-processor"
+
+  airflow_triggerer:
+    image: xddeng/airflow:airflow3
+    depends_on:
+      - "db"
+      - "airflow_api_server"
+    restart: always
+    volumes:
+       - ./dag_folder:/usr/local/airflow/dags
+    environment: *airflow_env_vars
+    command: >
+      sh -c "airflow triggerer"
+
+  airflow_celery_worker:
+    image: xddeng/airflow:airflow3
+    depends_on:
+      - "db"
+      - "airflow_api_server"
+      - "redis"
+    restart: always
+    volumes:
+       - ./dag_folder:/usr/local/airflow/dags
+    environment: *airflow_env_vars
+    command: >
+      sh -c "airflow celery worker"

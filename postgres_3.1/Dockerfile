@@ -45,10 +45,8 @@ RUN set -ex \
         /usr/share/doc-base
 
 
-RUN pip install psycopg2-binary
-RUN pip install virtualenv
-RUN pip install cryptography
-RUN pip install apache_airflow==3.1.0
+RUN pip install "apache_airflow[postgres]==3.1.0"
+RUN pip install apache-airflow-providers-celery
 
 # Set the working directory
 WORKDIR ${AIRFLOW_HOME}
@@ -60,5 +58,3 @@ RUN chown -R airflow: ${AIRFLOW_HOME}
 USER airflow
 
 EXPOSE 8080
-
-CMD ["bash", "start_airflow.sh"]
